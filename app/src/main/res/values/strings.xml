@@ -7,4 +7,5 @@
     <string name="c_capital">Capital City</string>
     <string name="c_flag">FLAG</string>
     <string name="c_currency">Currency name (TRI, $)</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>
