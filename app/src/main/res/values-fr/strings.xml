@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TP-2 Internationalisation</string>
+    <string name="login">Identifiant</string>
+    <string name="password">Mot de passe</string>
+    <string name="home_title">Entrez votre identifiant et mot de passe</string>
+    <string name="c_name">Nom Commun (Nom officiel)</string>
+    <string name="c_capital">Capitale</string>
+    <string name="c_flag">Drapeau</string>
+    <string name="c_currency">Nom de la devise (EUR, €)</string>
+</resources>

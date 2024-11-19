@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">TP-2 Internationalisation</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="home_title">Please enter your login and password</string>
+    <string name="c_name">Common Name (official Name)</string>
+    <string name="c_capital">Capital City</string>
+    <string name="c_flag">FLAG</string>
+    <string name="c_currency">Currency name (TRI, $)</string>
+</resources>
