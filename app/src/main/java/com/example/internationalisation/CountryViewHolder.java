@@ -46,6 +46,8 @@ public class CountryViewHolder extends RecyclerView.ViewHolder {
         currency = ((TextView) itemView.findViewById(R.id.tvc_currency));
     }
 
+    // Méthode afficher : met à jour les vues d'un ViewHolder avec les informations d'un pays
+    // (nom, capitale, monnaie, drapeau) en utilisant Glide pour charger l'image.
     public void afficher(Country country, RequestManager glide) {
         this.country = country;
 

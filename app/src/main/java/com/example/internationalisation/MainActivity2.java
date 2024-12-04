@@ -40,6 +40,8 @@ public class MainActivity2 extends AppCompatActivity {
     String jsonResponseString;
 
 
+    // Méthode onCreate : initialise l'interface, configure le SwipeRefreshLayout,
+    // le RecyclerView et l'adaptateur, puis charge les données en ligne.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +52,6 @@ public class MainActivity2 extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-//                getCountryData();
                 getOnlineCountryData();
             }
         });
@@ -64,44 +65,20 @@ public class MainActivity2 extends AppCompatActivity {
         adapter = new CountryAdapter(showCountries, Glide.with(this));
         recyclerView.setAdapter(adapter);
 
-//        getCountryData();
         getOnlineCountryData();
-
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
     }
 
-    private void getCountryData()
-    {
-        int number = new Random().nextInt(4)+1;
 
-        List<Country> countries = new ArrayList<Country>();
-
-        countries.add(new Country("Japan", "Japan", "Tokyo", "JPY", "Japanese Yen", "¥", 36.0, 138.0, ""));
-        countries.add(new Country("France", "French Republic", "Paris", "EUR", "Euro", "€", 46.0, 2.0, ""));
-        countries.add(new Country("United Kingdom", "United Kingdom of Great Britain and Northern Ireland", "London", "GBP", "British Pound", "£", 54.0, -2.0, ""));
-        countries.add(new Country("United States", "United States of America", "Washington, D.C.", "USD", "United States Dollar", "$", 38.0, -97.0, ""));
-
-        showCountries.clear();
-        for (int i = 0; i < number; i++)
-        {
-            showCountries.add(countries.get(0));
-            showCountries.add(countries.get(1));
-            showCountries.add(countries.get(2));
-            showCountries.add(countries.get(3));
-        }
-
-        refresh();
-    }
-
+    // Méthode refresh : arrête l'animation de rafraîchissement et met à jour l'adaptateur.
     private void refresh()
     {
         swipeRefreshLayout.setRefreshing(false);
         adapter.notifyDataSetChanged();
     }
+
+
+    // Méthode getOnlineCountryData : effectue une requête HTTP pour récupérer des données JSON sur un pays.
+    // Traite la réponse, convertit en JSON, met à jour la liste des pays et rafraîchit l'affichage.
 
     private void getOnlineCountryData()
     {
@@ -111,7 +88,9 @@ public class MainActivity2 extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()
-                    .url("https://restcountries.com/v3.1/all")
+                    // https://restcountries.com/v3.1/all
+                    // https://restcountries.com/#endpoints-region
+                    .url("https://restcountries.com/v3.1/name/france")
                     .get()
                     .build();
 
@@ -120,7 +99,6 @@ public class MainActivity2 extends AppCompatActivity {
             String test = "";
             try {
                 response = client.newCall(request).execute();
-//                test = response.body().string();
                 jsonResponseString = response.body().string();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -139,6 +117,9 @@ public class MainActivity2 extends AppCompatActivity {
         refresh();
     }
 
+
+    // Méthode inflateDataFromJSON : extrait et traite les données JSON pour créer une liste d'objets Country.
+    // Gère les exceptions JSON et extrait les informations telles que nom, capitale, monnaie, coordonnées, et drapeau.
     private void inflateDataFromJSON(String jsonResponse)
     {
         JSONArray arr = null;

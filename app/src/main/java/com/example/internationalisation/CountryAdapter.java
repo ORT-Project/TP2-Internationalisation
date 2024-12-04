@@ -25,6 +25,8 @@ public class CountryAdapter  extends RecyclerView.Adapter<CountryViewHolder> {
         this.glide = glide;
     }
 
+    // Méthode onCreateViewHolder : initialise un ViewHolder en utilisant le layout
+    // country_layout pour définir l'apparence d'un élément du RecyclerView.
     @NonNull
     @Override
     public CountryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -33,12 +35,16 @@ public class CountryAdapter  extends RecyclerView.Adapter<CountryViewHolder> {
         return new CountryViewHolder(view);
     }
 
+    // Méthode onBindViewHolder : lie les données d'un objet Country à un ViewHolder
+    // pour afficher les informations d'un pays à la position donnée.
     @Override
     public void onBindViewHolder(@NonNull CountryViewHolder holder, int position) {
         Country country = countries.get(position);
         holder.afficher(country, this.glide);
     }
 
+    // Méthode getItemCount : retourne le nombre d'éléments dans la liste des pays,
+    // ou 0 si la liste est nulle.
     @Override
     public int getItemCount() {
         if (countries != null)
