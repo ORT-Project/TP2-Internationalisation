@@ -1,5 +1,6 @@
 package com.example.internationalisation;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,21 +24,42 @@ public class CountryViewHolder extends RecyclerView.ViewHolder {
     {
         super(itemView);
 
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View view) {
+                //Un intent à besoin d'être envoyé par un objet héritant du type Context
+                // (généralement une activité). Ici nous ne somme pas dans un tel objet.
+                // Par contre notre ViewHolder sera contenu dans l'itemView passé
+                // en paramètre; cet itemView sera nécessairement inscrit dans un Context.
+                // C'est ce Context que l'on récupère ici, et qu'on utilise pour
+                // la méthode startActivity().
+                Intent intent = new Intent(itemView.getContext(), MapsActivity.class);
+                intent.putExtra("lat", country.getLatitude());
+                intent.putExtra("lng", country.getLongitude());
+                intent.putExtra("name", country.getCommonName());
+                itemView.getContext().startActivity(intent);
+            }
+        });
+
         name = ((TextView) itemView.findViewById(R.id.tvc_name));
         capital = ((TextView) itemView.findViewById(R.id.tvc_capital));
         flag = ((ImageView) itemView.findViewById(R.id.tvc_flag));
         currency = ((TextView) itemView.findViewById(R.id.tvc_currency));
     }
 
-    public void afficher(Country country, RequestManager glide)
-    {
+    public void afficher(Country country, RequestManager glide) {
         this.country = country;
 
-        name.setText(country.getCommonName() + " (" + country.getOfficialName() + ")");
-        capital.setText(country.getCapitalCity());
-        currency.setText(country.getCurrencyName() + " ( "+
-                country.getCurrencyTrigram() + ", "+
-                country.getCurrencySymbol() + ")");
-        glide.load("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/No_flag.svg/338px-No_flag.svg.png").apply(RequestOptions.circleCropTransform()).into(flag);
+        if (country != null) {
+            name.setText(country.getCommonName() + " (" + country.getOfficialName() + ")");
+            capital.setText(country.getCapitalCity());
+            currency.setText(country.getCurrencyName() + " ( " +
+                    country.getCurrencyTrigram() + ", " +
+                    country.getCurrencySymbol() + ")");
+            if (glide != null) {
+                glide.load(country.getFlagURL()).apply(RequestOptions.circleCropTransform()).override(150).into(flag);
+            } else {
+                flag.setImageResource(R.drawable.hsr);
+            }
+        }
     }
 }

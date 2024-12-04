@@ -8,4 +8,6 @@
     <string name="c_capital">Capitale</string>
     <string name="c_flag">Drapeau</string>
     <string name="c_currency">Nom de la devise (EUR, €)</string>
+    <string name="marker_in">Marqueur à %1$s</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>

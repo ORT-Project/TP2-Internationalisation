@@ -17,7 +17,7 @@ public class CountryAdapter  extends RecyclerView.Adapter<CountryViewHolder> {
     private List<Country> countries = null;
     private RequestManager glide;
 
-    public CountryAdapter(List<Country> countries, RequestManager with) {
+    public CountryAdapter(List<Country> countries, RequestManager glide) {
         if (countries != null)
         {
             this.countries = countries;

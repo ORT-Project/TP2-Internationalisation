@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import okhttp3.OkHttpClient;
@@ -36,6 +37,8 @@ public class MainActivity2 extends AppCompatActivity {
     private List<Country> showCountries = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    String jsonResponseString;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +50,8 @@ public class MainActivity2 extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getCountryData();
+//                getCountryData();
+                getOnlineCountryData();
             }
         });
 
@@ -60,7 +64,7 @@ public class MainActivity2 extends AppCompatActivity {
         adapter = new CountryAdapter(showCountries, Glide.with(this));
         recyclerView.setAdapter(adapter);
 
-        getCountryData();
+//        getCountryData();
         getOnlineCountryData();
 
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -101,6 +105,8 @@ public class MainActivity2 extends AppCompatActivity {
 
     private void getOnlineCountryData()
     {
+        showCountries.clear();
+
         Runnable myRunnable = () -> {
             OkHttpClient client = new OkHttpClient();
 
@@ -114,7 +120,8 @@ public class MainActivity2 extends AppCompatActivity {
             String test = "";
             try {
                 response = client.newCall(request).execute();
-                test = response.body().string();
+//                test = response.body().string();
+                jsonResponseString = response.body().string();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -127,6 +134,87 @@ public class MainActivity2 extends AppCompatActivity {
             t.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+        inflateDataFromJSON(jsonResponseString);
+        refresh();
+    }
+
+    private void inflateDataFromJSON(String jsonResponse)
+    {
+        JSONArray arr = null;
+
+        try {
+            arr = new JSONArray(jsonResponse);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } if (arr != null) {
+            // Pour chaque Pays
+            for (int i = 0; i < arr.length(); i++) {
+                String commonName = "Unknown";
+                String officialName = "Unknown";
+                String capitalCity = "Unknown";
+                String currencyTrigram = "???";
+                String currencyName = "Unknown";
+                String currencySymbol = "?";
+                Double lat = 0.0;
+                Double lng = 0.0;
+                String flagUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/No_flag.svg/338px-No_flag.svg.png";
+                // Je récupère l'objet pays
+                JSONObject obj = null;
+                try {
+                    obj = arr.getJSONObject(i);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } if (obj != null) {
+                    // on récupère les informations de nom
+                    JSONObject nameObject = null;
+                    try {
+                        nameObject = obj.getJSONObject("name");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } try {
+                        commonName = nameObject.getString("common");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } try {
+                        officialName = nameObject.getString("official");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } //On récupère la capitale
+                    try {
+                        capitalCity = obj.getJSONArray("capital").getString(0);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } //TODO : On récupère les informations de monnaie
+                    try {
+                        JSONObject currencyObject = obj.getJSONObject("currencies");
+                        currencyTrigram = currencyObject.keys().next();
+                        JSONObject currencyObject2 = currencyObject.getJSONObject(currencyTrigram);
+                        currencyName = currencyObject2.getString("name");
+                        currencySymbol = currencyObject2.getString("symbol");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //String currencyString = currencyObject.toString();
+
+                    // On récupère le code à deux lettres pour avoir l'adresse du drapeau
+                    String cca2 = null;
+                    try {
+                        cca2 = obj.getString("cca2").toLowerCase();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    flagUrl = "https://raw.githubusercontent.com/hampusborgos/country-flags/main/png100px/" + cca2 + ".png";
+                    JSONArray latlng = null;
+                    try {
+                        latlng = obj.getJSONArray("latlng");
+                        lat = latlng.getDouble(0); lng = latlng.getDouble(1);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                showCountries.add(new Country(commonName, officialName, capitalCity, currencyTrigram, currencyName, currencySymbol, lat, lng, flagUrl));
+            }
         }
     }
 }
